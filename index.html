@@ -1,0 +1,961 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Adam Morris | B.Sc. Computing for Business Portfolio</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;600;700;800&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#f0fdfa',
+                            100: '#ccfbf1',
+                            500: '#14b8a6',
+                            600: '#0d9488',
+                            700: '#0f766e',
+                            accent: '#06b6d4'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        heading: ['Outfit', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.05);
+        }
+        .dark ::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.05);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #14b8a6;
+            border-radius: 4px;
+        }
+
+        /* Glassmorphism utility */
+        .glass {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+        .dark .glass {
+            background: rgba(15, 23, 42, 0.8);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .glass-card {
+            background: rgba(255, 255, 255, 0.6);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(229, 231, 235, 0.8);
+        }
+        .dark .glass-card {
+            background: rgba(30, 41, 59, 0.5);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        /* Animated gradient text */
+        .gradient-text {
+            background: linear-gradient(135deg, #06b6d4 0%, #14b8a6 50%, #3b82f6 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        /* Floating blob animation */
+        @keyframes float {
+            0%, 100% { transform: translateY(0) scale(1); }
+            50% { transform: translateY(-15px) scale(1.03); }
+        }
+        .animate-float {
+            animation: float 6s ease-in-out infinite;
+        }
+
+        @keyframes pulse-slow {
+            0%, 100% { opacity: 0.3; }
+            50% { opacity: 0.7; }
+        }
+        .animate-pulse-slow {
+            animation: pulse-slow 4s ease-in-out infinite;
+        }
+
+        .modal-backdrop {
+            opacity: 0;
+            pointer-events: none;
+            transition: all 0.3s ease;
+        }
+        .modal-backdrop.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        /* Toast notification popup styling */
+        #toast {
+            transform: translateY(100px);
+            opacity: 0;
+            transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        }
+        #toast.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 dark:bg-slate-950 dark:text-slate-100 font-sans transition-colors duration-300 relative overflow-x-hidden min-h-screen">
+
+    <!-- Ambient background shapes -->
+    <div class="fixed top-0 left-1/4 w-96 h-96 bg-teal-500/10 dark:bg-teal-600/15 rounded-full blur-3xl pointer-events-none animate-float"></div>
+    <div class="fixed bottom-1/3 right-10 w-96 h-96 bg-cyan-500/10 dark:bg-cyan-600/15 rounded-full blur-3xl pointer-events-none animate-pulse-slow"></div>
+
+    <!-- Navigation Header -->
+    <header class="fixed top-0 left-0 right-0 z-40 px-4 sm:px-8 py-4 transition-all duration-300" id="navbar">
+        <div class="max-w-7xl mx-auto glass rounded-2xl px-6 py-3 flex justify-between items-center shadow-lg shadow-black/5">
+            <a href="#hero" class="font-heading font-extrabold text-2xl tracking-tight flex items-center gap-2">
+                <span>Adam<span class="gradient-text"> Morris</span></span>
+            </a>
+
+            <!-- Desktop Nav Items -->
+            <nav class="hidden md:flex items-center space-x-1 lg:space-x-2 font-medium text-sm">
+                <a href="#about" class="px-3 py-2 rounded-lg hover:text-teal-500 dark:hover:text-teal-400 transition-colors">About</a>
+                <a href="#skills" class="px-3 py-2 rounded-lg hover:text-teal-500 dark:hover:text-teal-400 transition-colors">Skills</a>
+                <a href="#projects" class="px-3 py-2 rounded-lg hover:text-teal-500 dark:hover:text-teal-400 transition-colors">Projects</a>
+                <a href="#education" class="px-3 py-2 rounded-lg hover:text-teal-500 dark:hover:text-teal-400 transition-colors">Education & Experience</a>
+                <a href="#contact" class="px-3 py-2 rounded-lg hover:text-teal-500 dark:hover:text-teal-400 transition-colors">Contact</a>
+            </nav>
+            <!-- Actions (Theme Toggle & Contact CTA) -->
+            <div class="flex items-center space-x-3">
+                <button id="themeToggle" aria-label="Toggle Theme" class="p-2.5 rounded-xl bg-slate-200/80 dark:bg-slate-800 text-slate-700 dark:text-slate-200 hover:bg-slate-300 dark:hover:bg-slate-700 transition-colors">
+                    <i class="fa-solid fa-moon text-lg hidden dark:block"></i>
+                    <i class="fa-solid fa-sun text-lg block dark:hidden"></i>
+                </button>
+                <a href="#contact" class="hidden sm:inline-flex items-center gap-2 bg-gradient-to-r from-teal-500 to-cyan-500 hover:from-teal-600 hover:to-cyan-600 text-slate-950 font-semibold text-sm px-4 py-2.5 rounded-xl shadow-md shadow-teal-500/20 hover:shadow-lg transition-all transform hover:-translate-y-0.5">
+                    <span>Contact Me</span>
+                    <i class="fa-solid fa-paper-plane text-xs"></i>
+                </a>
+                
+                <!-- Mobile Menu Button -->
+                <button id="mobileMenuBtn" aria-label="Toggle Mobile Menu" class="md:hidden p-2.5 rounded-xl bg-slate-200/80 dark:bg-slate-800 text-slate-700 dark:text-slate-200">
+                    <i class="fa-solid fa-bars text-lg" id="menuIcon"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Mobile Navigation Menu -->
+        <div id="mobileMenu" class="hidden md:hidden max-w-7xl mx-auto mt-2 glass rounded-2xl p-4 shadow-xl flex-col space-y-2 font-medium">
+            <a href="#about" class="mobile-nav-link px-4 py-2.5 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800/60 transition-colors">About</a>
+            <a href="#skills" class="mobile-nav-link px-4 py-2.5 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800/60 transition-colors">Skills</a>
+            <a href="#projects" class="mobile-nav-link px-4 py-2.5 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800/60 transition-colors">Projects</a>
+            <a href="#education" class="mobile-nav-link px-4 py-2.5 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800/60 transition-colors">Education & Experience</a>
+            <a href="#contact" class="mobile-nav-link px-4 py-2.5 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800/60 transition-colors">Contact</a>
+        </div>
+    </header>
+
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-24 space-y-24 sm:space-y-32">
+
+        <!-- HERO SECTION -->
+        <section id="hero" class="min-h-[82vh] flex items-center justify-center pt-8">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center w-full">
+                
+                <!-- Hero Text -->
+                <div class="lg:col-span-7 space-y-6 text-center lg:text-left">
+                    <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full glass text-teal-600 dark:text-teal-400 text-xs sm:text-sm font-semibold tracking-wide border border-teal-500/20">
+                        <span class="w-2 h-2 rounded-full bg-emerald-500 animate-ping"></span>
+                        B.Sc. Computing for Business Graduate • DCU
+                    </div>
+
+                    <h1 class="font-heading text-4xl sm:text-6xl lg:text-7xl font-extrabold tracking-tight leading-tight">
+                        Hi, I'm <span class="gradient-text">Adam Morris</span>
+                    </h1>
+
+                    <div class="text-xl sm:text-2xl font-medium text-slate-600 dark:text-slate-300 h-10 flex items-center justify-center lg:justify-start">
+                        <span>Passionate about&nbsp;</span>
+                        <span id="typing-text" class="text-teal-500 dark:text-teal-400 font-bold border-b-2 border-teal-500"></span>
+                    </div>
+
+                    <p class="text-base sm:text-lg text-slate-600 dark:text-slate-400 max-w-2xl mx-auto lg:mx-0 leading-relaxed">
+                        Computing for Business graduate from Dublin City University based in Ashbourne, Co. Meath. Specialised in full-stack web applications, Python tools, hardware architecture, and user-centric software solutions.
+                    </p>
+
+                    <!-- CTAs & Socials -->
+                    <div class="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4 pt-4">
+                        <a href="#projects" class="w-full sm:w-auto text-center px-7 py-3.5 rounded-xl bg-teal-500 hover:bg-teal-600 text-slate-950 font-semibold shadow-lg shadow-teal-500/20 hover:shadow-xl transition-all transform hover:-translate-y-0.5">
+                            Explore Projects <i class="fa-solid fa-arrow-down ml-2 text-sm"></i>
+                        </a>
+                        <a href="Adam_Morris_CV.pdf" download="Adam_Morris_CV.pdf" class="w-full sm:w-auto text-center px-7 py-3.5 rounded-xl glass hover:bg-slate-200 dark:hover:bg-slate-800 text-slate-800 dark:text-slate-100 font-semibold transition-all flex items-center justify-center gap-2">
+                            <i class="fa-solid fa-file-arrow-down text-teal-500"></i>
+                            Download CV
+                        </a>
+                    </div>
+
+                    <!-- Contact Quick Links -->
+                    <div class="flex items-center justify-center lg:justify-start gap-4 pt-4 text-slate-500 dark:text-slate-400">
+                        <a href="https://www.linkedin.com/in/adam-morris-220663320" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn Profile" class="p-3 rounded-xl glass hover:text-teal-400 hover:scale-110 transition-all"><i class="fa-brands fa-linkedin text-xl"></i></a>
+                        <a href="mailto:adammorris1590@gmail.com" aria-label="Email Adam" class="p-3 rounded-xl glass hover:text-teal-400 hover:scale-110 transition-all"><i class="fa-solid fa-envelope text-xl"></i></a>
+                        <button onclick="copyPhone('083 861 9582')" title="Copy Phone Number" class="p-3 rounded-xl glass hover:text-teal-400 hover:scale-110 transition-all"><i class="fa-solid fa-phone text-xl"></i></button>
+                        <span class="text-xs px-3 py-1 rounded-lg glass flex items-center gap-2"><i class="fa-solid fa-location-dot text-teal-500"></i> Co. Meath, Ireland</span>
+                    </div>
+                </div>
+
+                <!-- Hero Interactive Graphic -->
+                <div class="lg:col-span-5 flex justify-center">
+                    <div class="relative w-72 h-72 sm:w-80 sm:h-80 lg:w-96 lg:h-96 group">
+                        <div class="absolute -inset-1 bg-gradient-to-r from-teal-500 to-cyan-500 rounded-3xl blur-xl opacity-70 group-hover:opacity-100 transition duration-1000 group-hover:duration-200"></div>
+                        
+                        <div class="relative w-full h-full glass rounded-3xl p-6 flex flex-col justify-between items-center text-center shadow-2xl overflow-hidden border border-white/20">
+                            <div class="absolute top-4 right-4 bg-teal-500/20 text-teal-600 dark:text-teal-400 text-xs font-semibold px-3 py-1 rounded-full border border-teal-500/30">
+                                DCU Graduate
+                            </div>
+
+                            <div class="w-32 h-32 sm:w-40 sm:h-40 mt-4 rounded-full bg-gradient-to-tr from-teal-500 to-cyan-500 p-1 shadow-inner relative flex items-center justify-center">
+                                <div class="w-full h-full rounded-full bg-slate-900 flex items-center justify-center text-5xl font-extrabold text-teal-400 font-heading tracking-wider">
+                                    AM
+                                </div>
+                            </div>
+
+                            <div class="w-full pt-2 space-y-1">
+                                <h3 class="font-heading font-bold text-lg">Adam Morris</h3>
+                                <p class="text-xs text-slate-400">Computing for Business Graduate</p>
+                                <div class="flex justify-center gap-3 text-lg text-slate-700 dark:text-slate-300 pt-2">
+                                    <span title="Python"><i class="fa-brands fa-python hover:text-teal-400 transition-colors"></i></span>
+                                    <span title="JavaScript"><i class="fa-brands fa-js hover:text-yellow-400 transition-colors"></i></span>
+                                    <span title="HTML5"><i class="fa-brands fa-html5 hover:text-orange-500 transition-colors"></i></span>
+                                    <span title="Django"><i class="fa-solid fa-leaf hover:text-emerald-500 transition-colors"></i></span>
+                                    <span title="Linux"><i class="fa-brands fa-linux hover:text-cyan-400 transition-colors"></i></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- ABOUT ME SECTION -->
+        <section id="about" class="scroll-mt-24">
+            <div class="text-center max-w-3xl mx-auto mb-12">
+                <h2 class="text-xs font-bold uppercase tracking-widest text-teal-600 dark:text-teal-400 mb-2">Background & Focus</h2>
+                <p class="font-heading text-3xl sm:text-4xl font-bold">About Me</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <!-- Highlight 1 -->
+                <div class="glass-card p-6 rounded-2xl space-y-4 hover:border-teal-500/50 transition-all hover:shadow-lg">
+                    <div class="w-12 h-12 rounded-xl bg-teal-500/10 text-teal-500 flex items-center justify-center text-xl font-bold">
+                        <i class="fa-solid fa-laptop-code"></i>
+                    </div>
+                    <h3 class="font-heading text-xl font-bold">Full-Stack & Web Dev</h3>
+                    <p class="text-sm text-slate-600 dark:text-slate-400 leading-relaxed">
+                        Experienced in building multi-page web hubs and mobile apps using standard HTML/CSS/JS alongside frameworks like Django and React Native.
+                    </p>
+                </div>
+
+                <!-- Highlight 2 -->
+                <div class="glass-card p-6 rounded-2xl space-y-4 hover:border-teal-500/50 transition-all hover:shadow-lg">
+                    <div class="w-12 h-12 rounded-xl bg-cyan-500/10 text-cyan-500 flex items-center justify-center text-xl font-bold">
+                        <i class="fa-solid fa-microchip"></i>
+                    </div>
+                    <h3 class="font-heading text-xl font-bold">Systems & Hardware</h3>
+                    <p class="text-sm text-slate-600 dark:text-slate-400 leading-relaxed">
+                        Strong grasp of computer systems, Linux environments, operating systems, custom desktop PC builds, and hardware component upgrades.
+                    </p>
+                </div>
+
+                <!-- Highlight 3 -->
+                <div class="glass-card p-6 rounded-2xl space-y-4 hover:border-teal-500/50 transition-all hover:shadow-lg">
+                    <div class="w-12 h-12 rounded-xl bg-blue-500/10 text-blue-500 flex items-center justify-center text-xl font-bold">
+                        <i class="fa-solid fa-brain"></i>
+                    </div>
+                    <h3 class="font-heading text-xl font-bold">Data & Machine Learning</h3>
+                    <p class="text-sm text-slate-600 dark:text-slate-400 leading-relaxed">
+                        Academic excellence at DCU in Machine Learning algorithms, MySQL database administration, UI/UX implementation, and software architecture.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- SKILLS SECTION -->
+        <section id="skills" class="scroll-mt-24">
+            <div class="text-center max-w-3xl mx-auto mb-12">
+                <h2 class="text-xs font-bold uppercase tracking-widest text-teal-600 dark:text-teal-400 mb-2">Technical Competencies</h2>
+                <p class="font-heading text-3xl sm:text-4xl font-bold">IT Skills & Strengths</p>
+            </div>
+
+            <!-- Skill Category Selector Tabs -->
+            <div class="flex justify-center gap-2 mb-10 flex-wrap">
+                <button onclick="filterSkills('all')" class="skill-tab active px-5 py-2 rounded-xl text-sm font-semibold transition-all glass border border-teal-500/30 text-teal-600 dark:text-teal-400">All Skills</button>
+                <button onclick="filterSkills('web')" class="skill-tab px-5 py-2 rounded-xl text-sm font-semibold transition-all glass text-slate-600 dark:text-slate-400 hover:text-teal-500">Web & Mobile</button>
+                <button onclick="filterSkills('programming')" class="skill-tab px-5 py-2 rounded-xl text-sm font-semibold transition-all glass text-slate-600 dark:text-slate-400 hover:text-teal-500">Programming & DB</button>
+                <button onclick="filterSkills('systems')" class="skill-tab px-5 py-2 rounded-xl text-sm font-semibold transition-all glass text-slate-600 dark:text-slate-400 hover:text-teal-500">Systems & Hardware</button>
+            </div>
+
+            <!-- Skills Grid -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6 max-w-4xl mx-auto" id="skillsGrid">
+                
+                <!-- HTML / CSS / Web Design -->
+                <div class="skill-item glass-card p-4 rounded-xl space-y-2" data-category="web">
+                    <div class="flex justify-between items-center text-sm font-semibold">
+                        <span class="flex items-center gap-2"><i class="fa-brands fa-html5 text-orange-500"></i> HTML, CSS & UI/UX Design</span>
+                        <span class="text-teal-600 dark:text-teal-400">Advanced</span>
+                    </div>
+                    <div class="w-full bg-slate-200 dark:bg-slate-800 rounded-full h-2.5 overflow-hidden">
+                        <div class="bg-gradient-to-r from-teal-500 to-cyan-500 h-2.5 rounded-full transition-all duration-1000 ease-out" style="width: 90%"></div>
+                    </div>
+                </div>
+
+                <!-- Python -->
+                <div class="skill-item glass-card p-4 rounded-xl space-y-2" data-category="programming">
+                    <div class="flex justify-between items-center text-sm font-semibold">
+                        <span class="flex items-center gap-2"><i class="fa-brands fa-python text-yellow-400"></i> Python Programming</span>
+                        <span class="text-teal-600 dark:text-teal-400">Advanced</span>
+                    </div>
+                    <div class="w-full bg-slate-200 dark:bg-slate-800 rounded-full h-2.5 overflow-hidden">
+                        <div class="bg-gradient-to-r from-teal-500 to-cyan-500 h-2.5 rounded-full transition-all duration-1000 ease-out" style="width: 88%"></div>
+                    </div>
+                </div>
+
+                <!-- JavaScript -->
+                <div class="skill-item glass-card p-4 rounded-xl space-y-2" data-category="web">
+                    <div class="flex justify-between items-center text-sm font-semibold">
+                        <span class="flex items-center gap-2"><i class="fa-brands fa-js text-yellow-400"></i> JavaScript</span>
+                        <span class="text-teal-600 dark:text-teal-400">Proficient</span>
+                    </div>
+                    <div class="w-full bg-slate-200 dark:bg-slate-800 rounded-full h-2.5 overflow-hidden">
+                        <div class="bg-gradient-to-r from-teal-500 to-cyan-500 h-2.5 rounded-full transition-all duration-1000 ease-out" style="width: 82%"></div>
+                    </div>
+                </div>
+
+                <!-- Django & React Native -->
+                <div class="skill-item glass-card p-4 rounded-xl space-y-2" data-category="web">
+                    <div class="flex justify-between items-center text-sm font-semibold">
+                        <span class="flex items-center gap-2"><i class="fa-solid fa-leaf text-emerald-500"></i> Django & React Native</span>
+                        <span class="text-teal-600 dark:text-teal-400">Proficient</span>
+                    </div>
+                    <div class="w-full bg-slate-200 dark:bg-slate-800 rounded-full h-2.5 overflow-hidden">
+                        <div class="bg-gradient-to-r from-teal-500 to-cyan-500 h-2.5 rounded-full transition-all duration-1000 ease-out" style="width: 80%"></div>
+                    </div>
+                </div>
+
+                <!-- MySQL -->
+                <div class="skill-item glass-card p-4 rounded-xl space-y-2" data-category="programming">
+                    <div class="flex justify-between items-center text-sm font-semibold">
+                        <span class="flex items-center gap-2"><i class="fa-solid fa-database text-blue-400"></i> MySQL & Database Design</span>
+                        <span class="text-teal-600 dark:text-teal-400">Proficient</span>
+                    </div>
+                    <div class="w-full bg-slate-200 dark:bg-slate-800 rounded-full h-2.5 overflow-hidden">
+                        <div class="bg-gradient-to-r from-teal-500 to-cyan-500 h-2.5 rounded-full transition-all duration-1000 ease-out" style="width: 85%"></div>
+                    </div>
+                </div>
+
+                <!-- Operating Systems & Shell -->
+                <div class="skill-item glass-card p-4 rounded-xl space-y-2" data-category="systems">
+                    <div class="flex justify-between items-center text-sm font-semibold">
+                        <span class="flex items-center gap-2"><i class="fa-brands fa-linux text-cyan-400"></i> Linux, Shell & Windows OS</span>
+                        <span class="text-teal-600 dark:text-teal-400">Advanced</span>
+                    </div>
+                    <div class="w-full bg-slate-200 dark:bg-slate-800 rounded-full h-2.5 overflow-hidden">
+                        <div class="bg-gradient-to-r from-teal-500 to-cyan-500 h-2.5 rounded-full transition-all duration-1000 ease-out" style="width: 87%"></div>
+                    </div>
+                </div>
+
+                <!-- Computer Hardware -->
+                <div class="skill-item glass-card p-4 rounded-xl space-y-2" data-category="systems">
+                    <div class="flex justify-between items-center text-sm font-semibold">
+                        <span class="flex items-center gap-2"><i class="fa-solid fa-desktop text-purple-400"></i> PC Building & Hardware Upgrades</span>
+                        <span class="text-teal-600 dark:text-teal-400">Expert</span>
+                    </div>
+                    <div class="w-full bg-slate-200 dark:bg-slate-800 rounded-full h-2.5 overflow-hidden">
+                        <div class="bg-gradient-to-r from-teal-500 to-cyan-500 h-2.5 rounded-full transition-all duration-1000 ease-out" style="width: 95%"></div>
+                    </div>
+                </div>
+
+                <!-- Machine Learning -->
+                <div class="skill-item glass-card p-4 rounded-xl space-y-2" data-category="programming">
+                    <div class="flex justify-between items-center text-sm font-semibold">
+                        <span class="flex items-center gap-2"><i class="fa-solid fa-robot text-teal-400"></i> Machine Learning Concepts</span>
+                        <span class="text-teal-600 dark:text-teal-400">Academic</span>
+                    </div>
+                    <div class="w-full bg-slate-200 dark:bg-slate-800 rounded-full h-2.5 overflow-hidden">
+                        <div class="bg-gradient-to-r from-teal-500 to-cyan-500 h-2.5 rounded-full transition-all duration-1000 ease-out" style="width: 78%"></div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+         <!-- PROJECTS SHOWCASE -->
+        <section id="projects" class="scroll-mt-24">
+            <div class="text-center max-w-3xl mx-auto mb-12">
+                <h2 class="text-xs font-bold uppercase tracking-widest text-teal-600 dark:text-teal-400 mb-2">Portfolio Highlights</h2>
+                <p class="font-heading text-3xl sm:text-4xl font-bold">Featured Projects</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8" id="projectsContainer">
+                
+                <!-- Project 1: ScorVault -->
+                <div class="project-card glass-card rounded-2xl overflow-hidden group hover:border-teal-500/50 transition-all duration-300 shadow-md hover:shadow-xl flex flex-col justify-between">
+                    <div>
+                        <div class="relative overflow-hidden h-52 bg-slate-900 flex items-center justify-center p-6 border-b border-white/5">
+                            <div class="text-center space-y-2">
+                                <i class="fa-solid fa-trophy text-5xl text-teal-400 group-hover:scale-110 transition-transform duration-300"></i>
+                                <p class="text-xs font-bold uppercase text-slate-400 tracking-wider">Final Year Project • DCU</p>
+                            </div>
+                            <div class="absolute inset-0 bg-slate-950/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-3">
+                                <button onclick="openProjectModal('scorvault')" class="px-4 py-2 bg-teal-500 text-slate-950 text-xs font-bold rounded-xl hover:bg-teal-400 transition-colors shadow-lg flex items-center gap-2">
+                                    <i class="fa-solid fa-circle-info"></i> Project Details
+                                </button>
+                            </div>
+                        </div>
+                        <div class="p-6 space-y-3">
+                            <div class="flex items-center justify-between">
+                                <span class="text-xs font-bold text-teal-600 dark:text-teal-400 uppercase tracking-wider">Mobile & Web Application</span>
+                                <span class="text-xs text-slate-400">Final Year</span>
+                            </div>
+                            <h3 class="font-heading text-xl font-bold group-hover:text-teal-400 transition-colors">ScorVault - GAA Attendance Logger</h3>
+                            <p class="text-sm text-slate-600 dark:text-slate-400">
+                                Specialized application built to log and track attended Gaelic Athletic Association (GAA) matches with integrated statistics and event timeline management.
+                            </p>
+                        </div>
+                    </div>
+                    <div class="p-6 pt-0 flex flex-wrap gap-2">
+                        <span class="text-xs px-2.5 py-1 rounded-md bg-teal-500/10 text-teal-600 dark:text-teal-400 font-medium">Django</span>
+                        <span class="text-xs px-2.5 py-1 rounded-md bg-teal-500/10 text-teal-600 dark:text-teal-400 font-medium">Python</span>
+                        <span class="text-xs px-2.5 py-1 rounded-md bg-teal-500/10 text-teal-600 dark:text-teal-400 font-medium">React Native</span>
+                        <span class="text-xs px-2.5 py-1 rounded-md bg-teal-500/10 text-teal-600 dark:text-teal-400 font-medium">HTML/CSS</span>
+                    </div>
+                </div>
+
+                <!-- Project 2: League of Ireland Hub -->
+                <div class="project-card glass-card rounded-2xl overflow-hidden group hover:border-teal-500/50 transition-all duration-300 shadow-md hover:shadow-xl flex flex-col justify-between">
+                    <div>
+                        <div class="relative overflow-hidden h-52 bg-slate-900 flex items-center justify-center p-6 border-b border-white/5">
+                            <div class="text-center space-y-2">
+                                <i class="fa-solid fa-futbol text-5xl text-cyan-400 group-hover:scale-110 transition-transform duration-300"></i>
+                                <p class="text-xs font-bold uppercase text-slate-400 tracking-wider">10+ Page Web Portal</p>
+                            </div>
+                            <div class="absolute inset-0 bg-slate-950/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-3">
+                                <button onclick="openProjectModal('loi')" class="px-4 py-2 bg-teal-500 text-slate-950 text-xs font-bold rounded-xl hover:bg-teal-400 transition-colors shadow-lg flex items-center gap-2">
+                                    <i class="fa-solid fa-circle-info"></i> Project Details
+                                </button>
+                            </div>
+                        </div>
+                        <div class="p-6 space-y-3">
+                            <div class="flex items-center justify-between">
+                                <span class="text-xs font-bold text-cyan-600 dark:text-cyan-400 uppercase tracking-wider">Web Development</span>
+                                <span class="text-xs text-slate-400">Academic Project</span>
+                            </div>
+                            <h3 class="font-heading text-xl font-bold group-hover:text-teal-400 transition-colors">League of Ireland Information Hub</h3>
+                            <p class="text-sm text-slate-600 dark:text-slate-400">
+                                Comprehensive multi-page web platform featuring individual pages and detailed profiles for every club in the Irish Premier Division.
+                            </p>
+                        </div>
+                    </div>
+                    <div class="p-6 pt-0 flex flex-wrap gap-2">
+                        <span class="text-xs px-2.5 py-1 rounded-md bg-cyan-500/10 text-cyan-600 dark:text-cyan-400 font-medium">HTML5</span>
+                        <span class="text-xs px-2.5 py-1 rounded-md bg-cyan-500/10 text-cyan-600 dark:text-cyan-400 font-medium">CSS3</span>
+                        <span class="text-xs px-2.5 py-1 rounded-md bg-cyan-500/10 text-cyan-600 dark:text-cyan-400 font-medium">JavaScript</span>
+                        <span class="text-xs px-2.5 py-1 rounded-md bg-cyan-500/10 text-cyan-600 dark:text-cyan-400 font-medium">UI/UX</span>
+                    </div>
+                </div>
+
+                <!-- Project 3: Player Rating Algorithm -->
+                <div class="project-card glass-card rounded-2xl overflow-hidden group hover:border-teal-500/50 transition-all duration-300 shadow-md hover:shadow-xl flex flex-col justify-between">
+                    <div>
+                        <div class="relative overflow-hidden h-52 bg-slate-900 flex items-center justify-center p-6 border-b border-white/5">
+                            <div class="text-center space-y-2">
+                                <i class="fa-solid fa-chart-line text-5xl text-emerald-400 group-hover:scale-110 transition-transform duration-300"></i>
+                                <p class="text-xs font-bold uppercase text-slate-400 tracking-wider">Python Application</p>
+                            </div>
+                            <div class="absolute inset-0 bg-slate-950/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-3">
+                                <button onclick="openProjectModal('ratingApp')" class="px-4 py-2 bg-teal-500 text-slate-950 text-xs font-bold rounded-xl hover:bg-teal-400 transition-colors shadow-lg flex items-center gap-2">
+                                    <i class="fa-solid fa-circle-info"></i> Project Details
+                                </button>
+                            </div>
+                        </div>
+                        <div class="p-6 space-y-3">
+                            <div class="flex items-center justify-between">
+                                <span class="text-xs font-bold text-emerald-600 dark:text-emerald-400 uppercase tracking-wider">Data & Algorithms</span>
+                                <span class="text-xs text-slate-400">Software Project</span>
+                            </div>
+                            <h3 class="font-heading text-xl font-bold group-hover:text-teal-400 transition-colors">Football Player Rating Algorithm</h3>
+                            <p class="text-sm text-slate-600 dark:text-slate-400">
+                                A computational Python engine that evaluates seasonal stats (games played, goals, contributions) and generates performance ratings from 0 to 10.
+                            </p>
+                        </div>
+                    </div>
+                    <div class="p-6 pt-0 flex flex-wrap gap-2">
+                        <span class="text-xs px-2.5 py-1 rounded-md bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 font-medium">Python</span>
+                        <span class="text-xs px-2.5 py-1 rounded-md bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 font-medium">Algorithm Design</span>
+                        <span class="text-xs px-2.5 py-1 rounded-md bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 font-medium">CLI / GUI</span>
+                    </div>
+                </div>
+
+                <!-- Project 4: Custom PC Hardware -->
+                <div class="project-card glass-card rounded-2xl overflow-hidden group hover:border-teal-500/50 transition-all duration-300 shadow-md hover:shadow-xl flex flex-col justify-between">
+                    <div>
+                        <div class="relative overflow-hidden h-52 bg-slate-900 flex items-center justify-center p-6 border-b border-white/5">
+                            <div class="text-center space-y-2">
+                                <i class="fa-solid fa-screwdriver-wrench text-5xl text-purple-400 group-hover:scale-110 transition-transform duration-300"></i>
+                                <p class="text-xs font-bold uppercase text-slate-400 tracking-wider">Hardware Engineering</p>
+                            </div>
+                            <div class="absolute inset-0 bg-slate-950/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-3">
+                                <button onclick="openProjectModal('pcBuild')" class="px-4 py-2 bg-teal-500 text-slate-950 text-xs font-bold rounded-xl hover:bg-teal-400 transition-colors shadow-lg flex items-center gap-2">
+                                    <i class="fa-solid fa-circle-info"></i> Project Details
+                                </button>
+                            </div>
+                        </div>
+                        <div class="p-6 space-y-3">
+                            <div class="flex items-center justify-between">
+                                <span class="text-xs font-bold text-purple-600 dark:text-purple-400 uppercase tracking-wider">Computer Hardware</span>
+                                <span class="text-xs text-slate-400">Technical Assembly</span>
+                            </div>
+                            <h3 class="font-heading text-xl font-bold group-hover:text-teal-400 transition-colors">Custom Desktop PC Builds & Upgrades</h3>
+                            <p class="text-sm text-slate-600 dark:text-slate-400">
+                                Ground-up custom PC builds, component selection, CPU benchmarking, power supply installations, DDR4 RAM setup, and HDD-to-SSD migrations.
+                            </p>
+                        </div>
+                    </div>
+                    <div class="p-6 pt-0 flex flex-wrap gap-2">
+                        <span class="text-xs px-2.5 py-1 rounded-md bg-purple-500/10 text-purple-600 dark:text-purple-400 font-medium">PC Architecture</span>
+                        <span class="text-xs px-2.5 py-1 rounded-md bg-purple-500/10 text-purple-600 dark:text-purple-400 font-medium">DDR4 RAM</span>
+                        <span class="text-xs px-2.5 py-1 rounded-md bg-purple-500/10 text-purple-600 dark:text-purple-400 font-medium">NVMe SSDs</span>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+<!-- EDUCATION, EXPERIENCE & ACHIEVEMENTS SECTION -->
+        <section id="education" class="scroll-mt-24">
+            <div class="text-center max-w-3xl mx-auto mb-12">
+                <h2 class="text-xs font-bold uppercase tracking-widest text-teal-600 dark:text-teal-400 mb-2">Qualifications & Experience</h2>
+                <p class="font-heading text-3xl sm:text-4xl font-bold">Education & Career Journey</p>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 max-w-6xl mx-auto">
+                
+                <!-- Left Column: Academic Education -->
+                <div class="space-y-6">
+                    <h3 class="font-heading text-2xl font-bold flex items-center gap-3">
+                        <i class="fa-solid fa-graduation-cap text-teal-500"></i> Education
+                    </h3>
+
+                    <div class="space-y-6 border-l-2 border-slate-200 dark:border-slate-800 pl-6 ml-2">
+                        <!-- DCU Degree -->
+                        <div class="glass-card p-6 rounded-2xl space-y-2 hover:border-teal-500/50 transition-all relative">
+                            <div class="absolute -left-[31px] top-6 w-3 h-3 rounded-full bg-teal-500"></div>
+                            <span class="text-xs font-bold px-3 py-1 rounded-full bg-teal-500/10 text-teal-600 dark:text-teal-400">4 Years Study</span>
+                            <h4 class="font-heading text-lg font-bold text-slate-900 dark:text-slate-100 mt-2">B.Sc. Computing for Business</h4>
+                            <p class="text-sm font-medium text-slate-500 dark:text-slate-400">Dublin City University (DCU)</p>
+                            <p class="text-sm text-slate-600 dark:text-slate-400 pt-2">
+                                Scored excellently in modules including Programming, Web Design, Databases, Computer Hardware, Machine Learning, and UI/UX Design & Implementation.
+                            </p>
+                        </div>
+
+                        <!-- Dunboyne College -->
+                        <div class="glass-card p-6 rounded-2xl space-y-2 hover:border-teal-500/50 transition-all relative">
+                            <div class="absolute -left-[31px] top-6 w-3 h-3 rounded-full bg-cyan-500"></div>
+                            <span class="text-xs font-bold px-3 py-1 rounded-full bg-cyan-500/10 text-cyan-600 dark:text-cyan-400">1 Year Program</span>
+                            <h4 class="font-heading text-lg font-bold text-slate-900 dark:text-slate-100 mt-2">QQI Level 5 Computer Systems & Networks</h4>
+                            <p class="text-sm font-medium text-slate-500 dark:text-slate-400">Dunboyne College of Further Education</p>
+                            <p class="text-sm text-slate-600 dark:text-slate-400 pt-2">
+                                Completed modules in Mobile Technologies, Computer Hardware, Networking Fundamentals, and Operating Systems.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right Column: Work Experience & Achievements -->
+                <div class="space-y-6">
+                    <h3 class="font-heading text-2xl font-bold flex items-center gap-3">
+                        <i class="fa-solid fa-briefcase text-teal-500"></i> Work & Achievements
+                    </h3>
+
+                    <div class="space-y-6 border-l-2 border-slate-200 dark:border-slate-800 pl-6 ml-2">
+                        <!-- Gym Plus -->
+                        <div class="glass-card p-6 rounded-2xl space-y-2 hover:border-teal-500/50 transition-all relative">
+                            <div class="absolute -left-[31px] top-6 w-3 h-3 rounded-full bg-emerald-500"></div>
+                            <div class="flex justify-between items-center">
+                                <h4 class="font-heading text-lg font-bold text-slate-900 dark:text-slate-100">Housekeeping Cleaner</h4>
+                                <span class="text-xs text-slate-400 font-semibold">Apr 2022 – Present</span>
+                            </div>
+                            <p class="text-sm font-medium text-slate-500 dark:text-slate-400">Gym Plus</p>
+                            <ul class="text-xs text-slate-600 dark:text-slate-400 list-disc list-inside space-y-1 pt-2">
+                                <li>Deep cleaning gym equipment, changing rooms, and member facilities.</li>
+                                <li>Assisting facility members with queries with a friendly, service-oriented approach.</li>
+                            </ul>
+                        </div>
+
+                        <!-- RCH Facilities -->
+                        <div class="glass-card p-6 rounded-2xl space-y-2 hover:border-teal-500/50 transition-all relative">
+                            <div class="absolute -left-[31px] top-6 w-3 h-3 rounded-full bg-blue-500"></div>
+                            <div class="flex justify-between items-center">
+                                <h4 class="font-heading text-lg font-bold text-slate-900 dark:text-slate-100">Caretaker / Cleaner</h4>
+                                <span class="text-xs text-slate-400 font-semibold">Mar 2022 – Jan 2025</span>
+                            </div>
+                            <p class="text-sm font-medium text-slate-500 dark:text-slate-400">RCH Facilities Management</p>
+                            <ul class="text-xs text-slate-600 dark:text-slate-400 list-disc list-inside space-y-1 pt-2">
+                                <li>Managed groundskeeping, outdoor maintenance, and retail park logistics.</li>
+                                <li>Handled goods delivery coordination for companies within the retail park.</li>
+                            </ul>
+                        </div>
+
+                        <!-- Personal Interests Card -->
+                        <div class="glass-card p-6 rounded-2xl space-y-3 hover:border-teal-500/50 transition-all">
+                            <h4 class="font-heading text-base font-bold text-slate-900 dark:text-slate-100 flex items-center gap-2">
+                                <i class="fa-solid fa-award text-yellow-500"></i> Interests & Achievements
+                            </h4>
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs text-slate-600 dark:text-slate-300">
+                                <div class="flex items-center gap-2"><i class="fa-solid fa-circle-check text-teal-500"></i> League Winner: Ashbourne Utd FC</div>
+                                <div class="flex items-center gap-2"><i class="fa-solid fa-ticket text-teal-500"></i> Shelbourne FC Season Ticket Holder</div>
+                                <div class="flex items-center gap-2"><i class="fa-brands fa-x-twitter text-teal-500"></i> Event Ticketing Coordinator on X</div>
+                                <div class="flex items-center gap-2"><i class="fa-solid fa-id-card text-teal-500"></i> Full Irish Driver's Licence</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- CONTACT SECTION -->
+        <section id="contact" class="scroll-mt-24 pb-12">
+            <div class="text-center max-w-3xl mx-auto mb-12">
+                <h2 class="text-xs font-bold uppercase tracking-widest text-teal-600 dark:text-teal-400 mb-2">Get In Touch</h2>
+                <p class="font-heading text-3xl sm:text-4xl font-bold">Let's Connect</p>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 max-w-5xl mx-auto justify-center">
+    <!-- Direct Details -->
+    <div class="lg:col-span-12 space-y-6 flex justify-center">
+        <div class="glass-card p-6 rounded-2xl space-y-6 w-full max-w-xl text-center">
+            <h3 class="font-heading text-xl font-bold">Contact Details</h3>
+            <p class="text-sm text-slate-600 dark:text-slate-400 max-w-md mx-auto">
+                I am currently open to computing, web development, IT support, and software graduate opportunities.
+            </p>
+
+        <div class="space-y-4 w-full max-w-xs mx-auto flex flex-col items-start">
+    <!-- Email -->
+    <div class="flex items-center gap-4 group cursor-pointer w-full" onclick="copyText('adammorris1590@gmail.com', 'Email address copied!')">
+        <div class="w-10 h-10 shrink-0 rounded-xl bg-teal-500/10 text-teal-500 flex items-center justify-center group-hover:scale-110 transition-transform">
+            <i class="fa-solid fa-envelope"></i>
+        </div>
+        <div class="text-left">
+            <p class="text-xs text-slate-400">Email Address (Click to Copy)</p>
+            <span class="text-sm font-semibold hover:text-teal-400 transition-colors">adammorris1590@gmail.com</span>
+        </div>
+    </div>
+
+    <!-- Phone -->
+    <div class="flex items-center gap-4 group cursor-pointer w-full" onclick="copyText('0838619582', 'Phone number copied!')">
+        <div class="w-10 h-10 shrink-0 rounded-xl bg-cyan-500/10 text-cyan-500 flex items-center justify-center group-hover:scale-110 transition-transform">
+            <i class="fa-solid fa-phone"></i>
+        </div>
+        <div class="text-left">
+            <p class="text-xs text-slate-400">Phone Number (Click to Copy)</p>
+            <span class="text-sm font-semibold hover:text-teal-400 transition-colors">083 861 9582</span>
+        </div>
+    </div>
+
+    <!-- LinkedIn -->
+    <div class="flex items-center gap-4 group cursor-pointer w-full">
+        <div class="w-10 h-10 shrink-0 rounded-xl bg-blue-500/10 text-blue-500 flex items-center justify-center group-hover:scale-110 transition-transform">
+            <i class="fa-brands fa-linkedin"></i>
+        </div>
+        <div class="text-left">
+            <p class="text-xs text-slate-400">LinkedIn Profile</p>
+            <a href="https://www.linkedin.com/in/adam-morris-220663320" target="_blank" rel="noopener noreferrer" class="text-sm font-semibold hover:text-teal-400 transition-colors">linkedin.com/in/adam-morris</a>
+        </div>
+    </div>
+</div>    
+        </div>
+    </div>
+</div>
+
+    <!-- FOOTER -->
+    <footer class="border-t border-slate-200 dark:border-slate-900 mt-20 py-8">
+        <div class="max-w-7xl mx-auto px-4 text-center text-sm text-slate-500 dark:text-slate-400 space-y-2">
+            <p>© 2026 Adam Morris. B.Sc. Computing for Business Graduate.</p>
+            <p class="text-xs text-slate-500">Ashbourne, Co. Meath, Ireland</p>
+        </div>
+    </footer>
+
+    <!-- PROJECT DETAILS MODAL -->
+    <div id="projectModal" class="modal-backdrop fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md">
+        <div class="glass-card bg-slate-900 text-slate-100 max-w-2xl w-full rounded-2xl overflow-hidden shadow-2xl p-6 sm:p-8 space-y-6 relative border border-white/10">
+            <button onclick="closeProjectModal()" class="absolute top-4 right-4 p-2 text-slate-400 hover:text-white transition-colors">
+                <i class="fa-solid fa-xmark text-xl"></i>
+            </button>
+            <div id="modalContent" class="space-y-4"></div>
+        </div>
+    </div>
+
+    <!-- TOAST NOTIFICATION -->
+    <div id="toast" class="fixed bottom-6 right-6 z-50 bg-slate-900 text-teal-400 border border-teal-500/30 px-5 py-3 rounded-xl shadow-2xl flex items-center gap-3 text-sm font-semibold">
+        <i class="fa-solid fa-circle-check"></i>
+        <span id="toastMsg">Copied!</span>
+    </div>
+
+    <!-- JAVASCRIPT LOGIC -->
+    <script>
+        // 1. Theme Toggle Logic
+        const themeToggle = document.getElementById('themeToggle');
+        
+        if (localStorage.theme === 'light') {
+            document.documentElement.classList.remove('dark');
+        } else {
+            document.documentElement.classList.add('dark');
+        }
+
+        themeToggle.addEventListener('click', () => {
+            if (document.documentElement.classList.contains('dark')) {
+                document.documentElement.classList.remove('dark');
+                localStorage.theme = 'light';
+            } else {
+                document.documentElement.classList.add('dark');
+                localStorage.theme = 'dark';
+            }
+        });
+
+        // 2. Mobile Nav Toggle
+        const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+        const mobileMenu = document.getElementById('mobileMenu');
+        const mobileNavLinks = document.querySelectorAll('.mobile-nav-link');
+
+        mobileMenuBtn.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+            mobileMenu.classList.toggle('flex');
+        });
+
+        mobileNavLinks.forEach(link => {
+            link.addEventListener('click', () => {
+                mobileMenu.classList.add('hidden');
+                mobileMenu.classList.remove('flex');
+            });
+        });
+
+        // 3. Typing Effect
+        const phrases = ["Web Engineering.", "Python Applications.", "Django & React Native.", "Computer Systems & Hardware."];
+        let phraseIdx = 0;
+        let charIdx = 0;
+        let isDeleting = false;
+        const typingSpeed = 90;
+        const typingTextElement = document.getElementById('typing-text');
+
+        function typeEffect() {
+            const currentPhrase = phrases[phraseIdx];
+            
+            if (isDeleting) {
+                typingTextElement.textContent = currentPhrase.substring(0, charIdx - 1);
+                charIdx--;
+            } else {
+                typingTextElement.textContent = currentPhrase.substring(0, charIdx + 1);
+                charIdx++;
+            }
+
+            if (!isDeleting && charIdx === currentPhrase.length) {
+                isDeleting = true;
+                setTimeout(typeEffect, 1600);
+            } else if (isDeleting && charIdx === 0) {
+                isDeleting = false;
+                phraseIdx = (phraseIdx + 1) % phrases.length;
+                setTimeout(typeEffect, 400);
+            } else {
+                setTimeout(typeEffect, isDeleting ? typingSpeed / 2 : typingSpeed);
+            }
+        }
+        typeEffect();
+
+        // 4. Skills Filter
+        function filterSkills(category) {
+            const tabs = document.querySelectorAll('.skill-tab');
+            const items = document.querySelectorAll('.skill-item');
+
+            tabs.forEach(tab => {
+                tab.classList.remove('active', 'border', 'border-teal-500/30', 'text-teal-600', 'dark:text-teal-400');
+                tab.classList.add('text-slate-600', 'dark:text-slate-400');
+            });
+
+            event.target.classList.add('active', 'border', 'border-teal-500/30', 'text-teal-600', 'dark:text-teal-400');
+
+            items.forEach(item => {
+                if (category === 'all' || item.dataset.category === category) {
+                    item.style.display = 'block';
+                } else {
+                    item.style.display = 'none';
+                }
+            });
+        }
+
+        // 5. Modal Details Content Data
+        const projectDetails = {
+            scorvault: {
+                title: "ScorVault - GAA Match Attendance Logger",
+                type: "Final Year Degree Project • DCU",
+                description: "ScorVault is a cross-platform tracking app built to help GAA fans keep a lifelong record of Gaelic football and hurling matches attended. Built with a Django backend and React Native frontend UI.",
+                features: [
+                    "User authentication and personal attendance archive.",
+                    "Match score logging, venue tagging, and statistical summaries.",
+                    "Django REST API framework backend with persistent data storage."
+                ],
+                tech: ["Django", "Python", "React Native", "HTML/CSS", "MySQL"],
+                icon: "fa-trophy"
+            },
+            loi: {
+                title: "League of Ireland Information Hub",
+                type: "Multi-Page Web Portal",
+                description: "An expansive web portal spanning over 10 interconnected pages dedicated to providing in-depth details about the Irish Premier Division and every competing club.",
+                features: [
+                    "10+ responsive individual club profiles.",
+                    "Interactive navigation with custom CSS styling and JavaScript interactions.",
+                    "League history, stadium details, and squad information."
+                ],
+                tech: ["HTML5", "CSS3", "JavaScript", "Responsive UI/UX Design"],
+                icon: "fa-futbol"
+            },
+            ratingApp: {
+                title: "Football Player Rating Algorithm",
+                type: "Python Application",
+                description: "A tailored software program that computes objective performance ratings (0-10) for football players based on multi-variable inputs such as games played, goals scored, and efficiency rates.",
+                features: [
+                    "Custom scoring mathematical algorithm.",
+                    "Input validation and performance evaluation outputs.",
+                    "Built with extensible Python logic structure."
+                ],
+                tech: ["Python", "Algorithm Logic", "Data Processing"],
+                icon: "fa-chart-line"
+            },
+            pcBuild: {
+                title: "Custom Desktop PC Assembly & Upgrades",
+                type: "Hardware Architecture & Maintenance",
+                description: "Hands-on engineering involving assembling high-performance desktop systems from individual hardware components as well as diagnosing and upgrading existing systems.",
+                features: [
+                    "Motherboard, CPU, Power Supply, and GPU integration.",
+                    "HDD to high-speed SSD data migration and OS installation.",
+                    "RAM expansion (DDR4) and thermal management optimization."
+                ],
+                tech: ["Computer Hardware", "Windows/Linux OS", "Component Troubleshooting"],
+                icon: "fa-screwdriver-wrench"
+            }
+        };
+
+        const projectModal = document.getElementById('projectModal');
+        const modalContent = document.getElementById('modalContent');
+
+        function openProjectModal(key) {
+            const data = projectDetails[key];
+            if (!data) return;
+
+            modalContent.innerHTML = `
+                <div class="flex items-center gap-3 border-b border-white/10 pb-4">
+                    <div class="w-12 h-12 rounded-xl bg-teal-500/20 text-teal-400 flex items-center justify-center text-2xl">
+                        <i class="fa-solid ${data.icon}"></i>
+                    </div>
+                    <div>
+                        <span class="text-xs font-bold text-teal-400 uppercase tracking-wider">${data.type}</span>
+                        <h3 class="text-xl sm:text-2xl font-bold font-heading text-white">${data.title}</h3>
+                    </div>
+                </div>
+
+                <p class="text-sm text-slate-300 leading-relaxed">${data.description}</p>
+                
+                <div class="space-y-2 pt-2">
+                    <h4 class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Key Aspects</h4>
+                    <ul class="text-xs sm:text-sm text-slate-300 list-disc list-inside space-y-1">
+                        ${data.features.map(f => `<li>${f}</li>`).join('')}
+                    </ul>
+                </div>
+
+                <div class="pt-4 flex flex-wrap gap-2">
+                    ${data.tech.map(t => `<span class="text-xs px-2.5 py-1 rounded-md bg-teal-500/20 text-teal-300 font-medium">${t}</span>`).join('')}
+                </div>
+            `;
+
+            projectModal.classList.add('active');
+        }
+
+        function closeProjectModal() {
+            projectModal.classList.remove('active');
+        }
+
+        projectModal.addEventListener('click', (e) => {
+            if (e.target === projectModal) {
+                closeProjectModal();
+            }
+        });
+
+        // 6. Copy text utility with Toast notification
+        function copyText(text, message) {
+            const tempInput = document.createElement('input');
+            tempInput.value = text;
+            document.body.appendChild(tempInput);
+            tempInput.select();
+            document.execCommand('copy');
+            document.body.removeChild(tempInput);
+
+            showToast(message);
+        }
+
+        function copyPhone(phone) {
+            copyText(phone, 'Phone number copied to clipboard!');
+        }
+
+        function showToast(msg) {
+            const toast = document.getElementById('toast');
+            const toastMsg = document.getElementById('toastMsg');
+            toastMsg.textContent = msg;
+            toast.classList.add('show');
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
+        }
+
+        // 7. Form submission simulation
+        function handleFormSubmit(e) {
+            e.preventDefault();
+            const submitBtn = document.getElementById('submitBtn');
+            const originalBtnContent = submitBtn.innerHTML;
+
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = `<i class="fa-solid fa-spinner animate-spin"></i> Sending...`;
+
+            setTimeout(() => {
+                submitBtn.className = "w-full py-3.5 rounded-xl bg-emerald-600 text-white font-semibold transition-all flex items-center justify-center gap-2";
+                submitBtn.innerHTML = `<i class="fa-solid fa-check"></i> Message Sent Successfully!`;
+                document.getElementById('contactForm').reset();
+
+                setTimeout(() => {
+                    submitBtn.disabled = false;
+                    submitBtn.className = "w-full py-3.5 rounded-xl bg-teal-500 hover:bg-teal-600 text-slate-950 font-semibold shadow-lg shadow-teal-500/20 transition-all flex items-center justify-center gap-2";
+                    submitBtn.innerHTML = originalBtnContent;
+                }, 3000);
+            }, 1200);
+        }
+
+        // 8. Download CV alert handler
+        function downloadCV() {
+            showToast('Attach your CV PDF file to the project folder!');
+        }
+    </script>
+</body>
